@@ -20,8 +20,8 @@ class TestCDLinearRegression(TestCase):
         dim = 5
         x = np.random.normal(0, 1, size=num*dim)
         x = np.reshape(x, (num, dim))
-        inception = np.array([1.0 for i in range(num)])
-        x = np.hstack([np.reshape(inception, (num, 1)), x])
+        intercept = np.array([1.0 for i in range(num)])
+        x = np.hstack([np.reshape(intercept, (num, 1)), x])
         # beta = np.array([1.0, 2.0, 3.0, 0.02, -0.02, 0.2])
         beta = np.array([1.0, 2.0, 3.0, 0.00, 0.00, 0.2])
         beta = np.reshape(beta, (beta.shape[0], 1))
