@@ -1,4 +1,4 @@
-Enviornment Setting
+Environment Setting
 ---
 
 - Environment 1
