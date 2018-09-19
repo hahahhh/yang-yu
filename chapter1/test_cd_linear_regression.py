@@ -26,8 +26,8 @@ class TestCDLinearRegression(TestCase):
         beta = np.array([1.0, 2.0, 3.0, 0.00, 0.00, 0.2])
         beta = np.reshape(beta, (beta.shape[0], 1))
         y = np.matmul(x, beta) + np.random.normal(0, 1, num).reshape((num, 1))
-        beta_est = cd_lasso(y, x, iter_max=20, lambda_value=20.0)
-
+        # lambda_value 500.0
+        beta_est = cd_lasso(y, x, lambda_value=20.0)
         beta = beta.flatten()
         beta_est = beta_est.flatten()
         print("--------- Test CD algorithm for Lasso ---------")
@@ -46,7 +46,7 @@ class TestCDLinearRegression(TestCase):
         beta = np.array([1.0, 2.0, 3.0])
         beta = np.reshape(beta, (beta.shape[0], 1))
         y = np.matmul(x, beta) + np.random.normal(0, 1, num).reshape((num, 1))
-        beta_est = cd_linear_regression(y, x, 20)
+        beta_est = cd_linear_regression(y, x)
         beta = beta.flatten()
         beta_est = beta_est.flatten()
         print("--------- Test CD algorithm for LR ---------")

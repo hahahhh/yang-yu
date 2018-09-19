@@ -23,7 +23,7 @@ def cd_linear_regression(y, x, iter_max=100):
             beta[i] = (np.matmul(y[:, 0], x[:, i]) -
                        np.sum(np.matmul(x_tmp*x[:, [i]], beta_tmp))) / np.sum(np.square(x[:, i]))
             pass
-        if np.sqrt(np.sum(np.square(beta - last_beta))) < pow(1, -10):
+        if np.sqrt(np.sum(np.square(beta - last_beta))) < pow(10, -6):
             break
         else:
             pass
@@ -51,7 +51,7 @@ def cd_lasso(y, x, iter_max=100, lambda_value=100.0):
             # notice the usage of np.max
             beta[i] = np.sign(beta_ols) * np.max(np.array([np.abs(beta_ols) - threshold, 0]))
             pass
-        if np.sqrt(np.sum(np.square(beta - last_beta))) < pow(1, -10):
+        if np.sqrt(np.sum(np.square(beta - last_beta))) < pow(10, -6):
             break
         else:
             pass
@@ -74,7 +74,7 @@ def cd_ridge(y, x, iter_max=100, lambda_value=100.0):
             beta_ols = (np.matmul(y[:, 0], x[:, i]) - np.sum(np.matmul(x_tmp*x[:, [i]], beta_tmp))) / norm_arr[i]
             beta[i] = beta_ols / (1.0 + lambda_value)
             pass
-        if np.sqrt(np.sum(np.square(beta - last_beta))) < pow(1, -10):
+        if np.sqrt(np.sum(np.square(beta - last_beta))) < pow(10, -6):
             break
         else:
             pass
