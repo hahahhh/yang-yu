@@ -20,7 +20,8 @@ def cd_linear_regression(y, x, iter_max=100):
             not_update_index.pop(i)
             x_tmp = x[:, not_update_index]
             beta_tmp = beta[not_update_index].copy()
-            beta[i] = (np.matmul(y[:, 0], x[:, i]) - np.sum(np.matmul(x_tmp*x[:, [i]], beta_tmp))) / np.sum(np.square(x[:, i]))
+            beta[i] = (np.matmul(y[:, 0], x[:, i]) -
+                       np.sum(np.matmul(x_tmp*x[:, [i]], beta_tmp))) / np.sum(np.square(x[:, i]))
             pass
         if np.sqrt(np.sum(np.square(beta - last_beta))) < pow(1, -10):
             break
