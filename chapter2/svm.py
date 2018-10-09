@@ -8,13 +8,13 @@
 import numpy as np
 
 
-def svm(y, x, C=1.0, iter_max=100):
-    p = np.shape(x[1, :])[0]
-    num = np.shape(x)[0]
+def svm(y, x, cost=1.0, iter_max=100):
+    num = x.shape[0]
+    p = x.shape[1]
     # compute kernel (actually, this step may be redundant):
     kernel = svm_kernel(x, num)
     # compute alpha:
-    alpha = smo(y, x, kernel, C, num, p, iter_max)
+    alpha = smo(y, x, kernel, cost, num, p, iter_max)
     # compute beta:
     beta = svm_beta(y, x, alpha=alpha, num=num, p=p)
     # compute intercept:
@@ -125,12 +125,12 @@ def fxi_batch(num, y, alpha, kernel, b):
     return fxi_list
 
 
-def lower_bound(y1, y2, alpha_o1, alpha_o2, C):
-    return max([0.0, alpha_o2 + alpha_o1 - C]) if y1 * y2 == 1 else max([0.0, alpha_o2 - alpha_o1])
+def lower_bound(y1, y2, alpha_o1, alpha_o2, cost):
+    return max([0.0, alpha_o2 + alpha_o1 - cost]) if y1 * y2 == 1 else max([0.0, alpha_o2 - alpha_o1])
 
 
-def upper_bound(y1, y2, alpha_o1, alpha_o2, C):
-    return min([C, alpha_o2 + alpha_o1]) if y1 * y2 == 1 else min([C, C + alpha_o2 - alpha_o1])
+def upper_bound(y1, y2, alpha_o1, alpha_o2, cost):
+    return min([cost, alpha_o2 + alpha_o1]) if y1 * y2 == 1 else min([cost, cost + alpha_o2 - alpha_o1])
 
 
 def target_value(y1, y2, alpha1, alpha2, kernel11, kernel22, kernel12, fit1, fit2):
