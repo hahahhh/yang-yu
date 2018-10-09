@@ -12,6 +12,7 @@ import numpy as np
 # @File    : test_svm.py
 class TestSvm(TestCase):
     def test_svm(self):
+        np.random.seed(1)
         num = 30
         cov_mat = np.diag([1, 1])
         x1 = np.random.multivariate_normal(mean=[5, 5], cov=cov_mat, size=num)

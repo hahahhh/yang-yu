@@ -11,7 +11,7 @@ import numpy as np
 def svm(y, x, C=1.0, iter_max=100):
     p = np.shape(x[1, :])[0]
     num = np.shape(x)[0]
-    # compute kernel:
+    # compute kernel (actually, this step may be redundant):
     kernel = svm_kernel(x, num)
     # compute alpha:
     alpha = smo(y, x, kernel, C, num, p, iter_max)
@@ -37,7 +37,7 @@ def svm_intercept(y, x, beta, alpha):
     value = 0.0
     for index, alpha_value in enumerate(alpha):
         if alpha_value > 0:
-            value += (1 - y[index]*np.matmul(x[index, :], beta)) / y[index]
+            value += (1 - y[index] * np.matmul(x[index, :], beta)) / y[index]
             sv_number += 1
         pass
     return value / sv_number
@@ -51,8 +51,7 @@ def svm_beta(y, x, alpha, num, p):
     return beta
 
 
-def smo(y, x, kernel, C, num, p, iter_max, tol=10**-6):
-    # alpha = np.random.uniform(-1, 1, size=num)
+def smo(y, x, kernel, C, num, p, iter_max, tol=10 ** -6):
     b = 0.0
     alpha = np.zeros(num)
     fxi_array = fxi_batch(num, y, alpha, kernel, b)
@@ -75,7 +74,7 @@ def smo(y, x, kernel, C, num, p, iter_max, tol=10**-6):
         lower_bound_value = lower_bound(y[index1], y[index2], alpha_o1, alpha_o2, C)
         if upper_bound_value <= lower_bound_value:
             continue
-        k = kernel[index1, index1] + kernel[index2, index2] - 2*kernel[index1, index2]
+        k = kernel[index1, index1] + kernel[index2, index2] - 2 * kernel[index1, index2]
         # avoid the same input point:
         if k < 0:
             continue
@@ -85,8 +84,8 @@ def smo(y, x, kernel, C, num, p, iter_max, tol=10**-6):
         # update alpha_1:
         alpha[index1] += (alpha_o2 - alpha[index2]) * y[index1] * y[index2]
         # update fitting and error:
-        fxi_array[index1] = fxi(index1, y, alpha, kernel, num, b)
-        fxi_array[index2] = fxi(index2, y, alpha, kernel, num, b)
+        fxi_array[index1] = fxi(index1, y, alpha, kernel, b)
+        fxi_array[index2] = fxi(index2, y, alpha, kernel, b)
         error[index1] = fxi_array[index1] - y[index1]
         error[index2] = fxi_array[index2] - y[index2]
         # The threshold b is re-computed so that the KKT conditions are fulfilled for both optimized examples.
@@ -105,38 +104,37 @@ def smo(y, x, kernel, C, num, p, iter_max, tol=10**-6):
         # stop criterion:
         target_value_new = target_value(y[index1], y[index2], alpha[index1], alpha[index2],
                                         kernel11=kernel[index1, index1], kernel22=kernel[index2, index2],
-                                        kernel12=kernel[index1, index2], fit1=fxi_array[index1], fit2=fxi_array[index2])
+                                        kernel12=kernel[index1, index2],
+                                        fit1=fxi_array[index1], fit2=fxi_array[index2])
         if abs(target_value_new - target_value_old) < tol and (iter_num > iter_max):
             not_stop = False
         pass
     return alpha
 
 
-def fxi(i, y, alpha, kernel, num, b):
+def fxi(i, y, alpha, kernel, b):
     fxi_value = b
-    for j in range(num):
-        fxi_value += y[j] * alpha[j] * kernel[i, j]
-        pass
+    fxi_value += np.sum(y * alpha * kernel[i, :])
     return fxi_value
 
 
 def fxi_batch(num, y, alpha, kernel, b):
     fxi_list = np.zeros(num)
     for i in range(num):
-        fxi_list[i] = fxi(i, y, alpha, kernel, num, b)
+        fxi_list[i] = fxi(i, y, alpha, kernel, b)
     return fxi_list
 
 
 def lower_bound(y1, y2, alpha_o1, alpha_o2, C):
-    return max([0.0, alpha_o2 + alpha_o1 - C]) if y1*y2 == 1 else max([0.0, alpha_o2 - alpha_o1])
+    return max([0.0, alpha_o2 + alpha_o1 - C]) if y1 * y2 == 1 else max([0.0, alpha_o2 - alpha_o1])
 
 
 def upper_bound(y1, y2, alpha_o1, alpha_o2, C):
-    return min([C, alpha_o2 + alpha_o1]) if y1*y2 == 1 else min([C, C + alpha_o2 - alpha_o1])
+    return min([C, alpha_o2 + alpha_o1]) if y1 * y2 == 1 else min([C, C + alpha_o2 - alpha_o1])
 
 
 def target_value(y1, y2, alpha1, alpha2, kernel11, kernel22, kernel12, fit1, fit2):
     return alpha1 + alpha2 - \
-           0.5*kernel11*pow(alpha1, 2) - 0.5*kernel22*pow(alpha2, 2) - \
-           y1*y2*kernel12*alpha1*alpha2 - \
-           y1*alpha1*fit1 - y2*alpha2*fit2
+           0.5 * kernel11 * pow(alpha1, 2) - 0.5 * kernel22 * pow(alpha2, 2) - \
+           y1 * y2 * kernel12 * alpha1 * alpha2 - \
+           y1 * alpha1 * fit1 - y2 * alpha2 * fit2
