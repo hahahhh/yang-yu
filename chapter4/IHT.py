@@ -4,7 +4,6 @@
 # @Author  : Mamba
 # @File    : IHT.py
 
-import math
 import numpy as np
 from numpy import linalg as la
 
@@ -21,10 +20,10 @@ def hard_threshold(y, m):
 
 # Returns the value of the objective function
 def f(x, phi, y):
-    return 0.5 * math.pow(la.norm(x - phi @ y, 2), 2)
+    return 0.5 * np.square(la.norm(x - phi @ y, 2))
 
 
-def iht(x, phi, k, iter_max, epsilon, verbose, x_star):
+def iht(x, phi, m, iter_max, epsilon, verbose, x_star):
     # Length of original signal
     p = phi.shape[1]
     # Initial estimate
@@ -39,7 +38,7 @@ def iht(x, phi, k, iter_max, epsilon, verbose, x_star):
         # Perform gradient step
         x_temp = y_old + grad
         # Perform hard thresholding step
-        y_new = hard_threshold(x_temp, k)
+        y_new = hard_threshold(x_temp, m)
 
         if (la.norm(y_new - y_old, 2) / la.norm(y_new, 2)) < epsilon:
             break
