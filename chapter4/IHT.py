@@ -11,45 +11,44 @@ from numpy import linalg as la
 
 
 # Hard thresholding function
-def hard_threshold(x, k):
+def hard_threshold(y, m):
     #    p = x.shape[0]
-    t = np.sort(np.abs(x))[::-1]
-    threshold = t[k - 1]
-    j = (np.abs(x) < threshold)
-    x[j] = 0
-    return x
+    t = np.sort(np.abs(y))[::-1]
+    threshold = t[m - 1]
+    j = (np.abs(y) < threshold)
+    y[j] = 0
+    return y
 
 
 # Returns the value of the objective function
-def f(y, phi, x):
-    return 0.5 * math.pow(la.norm(y - phi @ x, 2), 2)
+def f(x, phi, y):
+    return 0.5 * math.pow(la.norm(x - phi @ y, 2), 2)
 
 
-def iht(y, phi, k, iter_max, epsilon, verbose, x_star):
+def iht(x, phi, k, iter_max, epsilon, verbose, x_star):
     # Length of original signal
     p = phi.shape[1]
     # Initial estimate
-    x_new = np.zeros(p)
+    y_new = np.zeros(p)
     phi_transpose = np.transpose(phi)
-    x_list, f_list = [1.0], [f(y, phi, x_new)]
+    diff_list, error_list = [1.0], [f(x, phi, y_new)]
 
     for i in range(iter_max):
-        x_old = x_new
+        y_old = y_new
         # Compute gradient
-        grad = phi_transpose @ (y - phi @ x_old)
+        grad = phi_transpose @ (x - phi @ y_old)
         # Perform gradient step
-        x_temp = x_old + grad
+        x_temp = y_old + grad
         # Perform hard thresholding step
-        x_new = hard_threshold(x_temp, k)
+        y_new = hard_threshold(x_temp, k)
 
-        if (la.norm(x_new - x_old, 2) / la.norm(x_new, 2)) < epsilon:
+        if (la.norm(y_new - y_old, 2) / la.norm(y_new, 2)) < epsilon:
             break
 
         # Keep track of solutions and objective values
-        x_list.append(la.norm(x_new - x_star, 2))
-        f_list.append(f(y, phi, x_new))
+        diff_list.append(la.norm(y_new - x_star, 2))
+        error_list.append(f(x, phi, y_new))
         if verbose:
-            print("iter# = " + str(i) + ", ||x_new - x_old||_2 = " + str(la.norm(x_new - x_old, 2)))
+            print("iter# = " + str(i) + ", ||x_new - x_old||_2 = " + str(la.norm(y_new - y_old, 2)))
 
-    # print("Number of steps:", len(f_list))
-    return x_new, x_list, f_list
+    return y_new, diff_list, error_list
