@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2018/10/29 21:46
 # @Author  : Mamba
-# @Site    : ${SITE}
 # @File    : test_IHT.py
 
 

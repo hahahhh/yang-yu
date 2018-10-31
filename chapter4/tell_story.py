@@ -1,9 +1,8 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Oct 29 21:33:30 2018
-
-@author: JinZhu
-"""
+# @Time    : 2018/10/29 21:46
+# @Author  : Mamba
+# @File    : tell_story.py
 
 import math
 import random

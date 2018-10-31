@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2018/10/29 21:43
 # @Author  : Mamba
-# @Site    : 
 # @File    : IHT.py
 
 import math
